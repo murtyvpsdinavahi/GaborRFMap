@@ -85,6 +85,9 @@ NSString *GRFConvertToGratingKey = @"GRFConvertToGrating";
 NSString *GRFUseSingleITC18Key = @"GRFUseSingleITC18";
 
 NSString *GRFHideTaskGaborKey = @"GRFHideTaskGabor";
+NSString *GRFTaskGaborContrastPCKey = @"GRFTaskGaborContrastPC";
+NSString *GRFTaskGaborDirectionDegKey = @"GRFTaskGaborDirectionDeg";
+
 NSString *GRFIncludeCatchTrialsinDoneListKey = @"GRFIncludeCatchTrialsinDoneList";
 NSString *GRFMapTemporalModulationKey = @"GRFMapTemporalModulation";
 

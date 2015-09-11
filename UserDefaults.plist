@@ -438,5 +438,9 @@
 	<integer>16</integer>
 	<key>GRFTries</key>
 	<integer>1</integer>
+	<key>GRFTaskGaborContrastPC</key>
+	<integer>100</integer>
+	<key>GRFTaskGaborDirectionDeg</key>
+	<integer>0</integer>
 </dict>
 </plist>

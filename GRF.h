@@ -241,6 +241,9 @@ extern NSString *GRFConvertToGratingKey;
 extern NSString *GRFUseSingleITC18Key;
 
 extern NSString *GRFHideTaskGaborKey;
+extern NSString *GRFTaskGaborContrastPCKey;
+extern NSString *GRFTaskGaborDirectionDegKey;
+
 extern NSString *GRFIncludeCatchTrialsinDoneListKey;
 extern NSString *GRFMapTemporalModulationKey;
 

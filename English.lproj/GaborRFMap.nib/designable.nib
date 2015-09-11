@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
         <deployment version="1050" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GaborRFMap">
@@ -608,9 +608,9 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" id="1362">
-                        <rect key="frame" x="99" y="12" width="146" height="32"/>
+                        <rect key="frame" x="23" y="2" width="158" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <buttonCell key="cell" type="push" title="Gabor 0 Settings" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="2563">
+                        <buttonCell key="cell" type="push" title="Task Gabor Settings" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="2563">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
@@ -735,6 +735,34 @@
                                     <string key="NSValueTransformerName">TaskStatusIdleAndNoFileTransformer</string>
                                 </dictionary>
                             </binding>
+                        </connections>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="yBU-kz-0eg">
+                        <rect key="frame" x="5" y="53" width="180" height="34"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Task Gabor Contrast (%)" id="Rst-f2-NJ3">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField toolTip="Task Gabor Contrast" verticalHuggingPriority="750" id="5Qp-S7-V3X">
+                        <rect key="frame" x="191" y="65" width="78" height="22"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="vcO-gd-5gj">
+                            <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="," id="aDu-pR-Huj">
+                                <attributedString key="attributedStringForZero">
+                                    <fragment content="0"/>
+                                </attributedString>
+                                <decimal key="minimum" value="0"/>
+                                <decimal key="maximum" value="NaN"/>
+                            </numberFormatter>
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="498" name="value" keyPath="values.GRFTaskGaborContrastPC" id="qAY-h7-8pT"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" id="1453">
@@ -965,14 +993,14 @@
                         <rect key="frame" x="288" y="20" width="285" height="253"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <clipView key="contentView" id="qlY-oF-P1N">
-                            <rect key="frame" x="1" y="17" width="268" height="220"/>
+                            <rect key="frame" x="1" y="17" width="283" height="235"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveName="GRFChangeArrayTable" headerView="2616" id="1496">
-                                    <rect key="frame" x="0.0" y="0.0" width="268" height="19"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="283" height="235"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
                                         <tableColumn identifier="change" width="70" minWidth="40" maxWidth="1000" id="1497">
@@ -1145,7 +1173,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" id="2665">
-                        <rect key="frame" x="66" y="126" width="151" height="23"/>
+                        <rect key="frame" x="66" y="159" width="151" height="23"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Run in fixation mode" id="2666">
                             <font key="font" metaFont="system" size="14"/>
@@ -1154,7 +1182,7 @@
                         </textFieldCell>
                     </textField>
                     <button id="2667">
-                        <rect key="frame" x="20" y="96" width="128" height="24"/>
+                        <rect key="frame" x="20" y="129" width="128" height="24"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Hide Task Gabor" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2668">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1170,7 +1198,7 @@
                         </connections>
                     </button>
                     <button id="2672">
-                        <rect key="frame" x="20" y="70" width="219" height="24"/>
+                        <rect key="frame" x="20" y="103" width="219" height="24"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <buttonCell key="cell" type="check" title="Include Catch trials in DoneList" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2673">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1185,6 +1213,34 @@
                             <binding destination="498" name="value" keyPath="values.GRFIncludeCatchTrialsinDoneList" id="2676"/>
                         </connections>
                     </button>
+                    <textField verticalHuggingPriority="750" id="dg4-eA-HoM">
+                        <rect key="frame" x="2" y="23" width="183" height="34"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Task Gabor Orientation (deg) " id="MFR-jt-onC">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField toolTip="Task Gabor Orientation" verticalHuggingPriority="750" id="sPH-4Y-oo1">
+                        <rect key="frame" x="191" y="35" width="78" height="22"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="ZJB-nP-RmP">
+                            <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="," id="cL7-bP-DVB">
+                                <attributedString key="attributedStringForZero">
+                                    <fragment content="0"/>
+                                </attributedString>
+                                <decimal key="minimum" value="0"/>
+                                <decimal key="maximum" value="NaN"/>
+                            </numberFormatter>
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="498" name="value" keyPath="values.GRFTaskGaborDirectionDeg" id="hOX-Ie-k64"/>
+                        </connections>
+                    </textField>
                 </subviews>
             </view>
         </window>
@@ -1375,7 +1431,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="20"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -1663,7 +1719,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="19"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -1927,7 +1983,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="20"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -2141,7 +2197,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="20"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -2386,7 +2442,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="20"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -2644,7 +2700,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="598" height="20"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
                                                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                         <tableColumns>
@@ -3097,7 +3153,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="238" height="19"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <size key="intercellSpacing" width="3" height="2"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                         <tableColumns>
                             <tableColumn width="116" minWidth="40" maxWidth="1000" id="AbR-7z-zku">
@@ -3155,7 +3211,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="238" height="19"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <size key="intercellSpacing" width="3" height="2"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                         <tableColumns>
                             <tableColumn width="116" minWidth="40" maxWidth="1000" id="Bwh-Zl-iMw">

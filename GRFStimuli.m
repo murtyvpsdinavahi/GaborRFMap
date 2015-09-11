@@ -212,13 +212,15 @@ by mapStimTable.
 		stimDesc.gaborIndex = kTaskGabor;
 		stimDesc.sequenceIndex = stim;
 		stimDesc.stimType = kValidStim;
-		stimDesc.contrastPC = 100.0*[taskGabor contrast];
+//		stimDesc.contrastPC = 100.0*[taskGabor contrast];
+        stimDesc.contrastPC = [[task defaults] floatForKey:GRFTaskGaborContrastPCKey];
         stimDesc.temporalFreqHz = [taskGabor temporalFreqHz];
 		stimDesc.azimuthDeg = [taskGabor azimuthDeg];
 		stimDesc.elevationDeg = [taskGabor elevationDeg];
 		stimDesc.sigmaDeg = [taskGabor sigmaDeg];
 		stimDesc.spatialFreqCPD = [taskGabor spatialFreqCPD];
-        stimDesc.directionDeg = [taskGabor directionDeg];
+//      stimDesc.directionDeg = [taskGabor directionDeg];
+        stimDesc.directionDeg = [[task defaults] floatForKey:GRFTaskGaborDirectionDegKey];
 		stimDesc.radiusDeg = [taskGabor radiusDeg];
         stimDesc.temporalModulation = [taskGabor temporalModulation];
 	
