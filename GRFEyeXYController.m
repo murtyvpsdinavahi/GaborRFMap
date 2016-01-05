@@ -80,9 +80,11 @@ NSString *GRFXYAutosaveKey = @"GRFXYAutosave";
 }
 
 - (IBAction) doOptions:(id)sender {
-
-    [NSApp beginSheet:optionsSheet modalForWindow:[self window] modalDelegate:self
-        didEndSelector:nil contextInfo:nil];
+//
+//    [NSApp beginSheet:optionsSheet modalForWindow:[self window] modalDelegate:self
+//        didEndSelector:nil contextInfo:nil];
+    [[self window] beginSheet:optionsSheet completionHandler:^(NSModalResponse returnCode) {
+    }]; // MD 01-01-2015: compatible with OS 10.11
 }
 
 // Because we have added ourself as an LLDrawable to the eyePlot, this draw method

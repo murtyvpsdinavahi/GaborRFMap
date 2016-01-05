@@ -130,6 +130,9 @@
 -(id) init;
 {
 	if ((self = [super init])) {
+        digitalOutDevice = [[task dataController] deviceWithName:@"LabJackU6"];
+        
+        /*
 		digitalOutDevice = (LLITC18DataDevice *)[[task dataController] deviceWithName:@"ITC-18 1"];
 		if (digitalOutDevice == nil) {
 //			NSRunAlertPanel(@"GRFDigitalOut",  @"Can't find data device named \"%@\", trying ITC-18 instead.",
@@ -141,6 +144,8 @@
 				//exit(0);
 			}
 		}
+         */
+        
 		lock = [[NSLock alloc] init];
 	}
 	return self;
@@ -150,9 +155,9 @@
 {
     BOOL useSingleITC18;
     
-	if (digitalOutDevice == nil) {
-		return NO;
-	}
+//	if (digitalOutDevice == nil) {
+//		return NO;
+//	}
 	[lock lock];
 	
     useSingleITC18 = [[task defaults] boolForKey:GRFUseSingleITC18Key];
@@ -179,9 +184,9 @@
 - (BOOL)outputEvent:(long)event sleepInMicrosec:(int)sleepTimeInMicrosec;
 {
     
-    if (digitalOutDevice == nil) {
-        return NO;
-    }
+//    if (digitalOutDevice == nil) {
+//        return NO;
+//    }
     [lock lock];
     
     [[task dataController] digitalOutputBits:((event | 0x8001))];
@@ -203,9 +208,9 @@
     NSString *thisEventName;
 	BOOL useSingleITC18;
     
-	if (digitalOutDevice == nil) {
-		return NO;
-	}
+//	if (digitalOutDevice == nil) {
+//		return NO;
+//	}
 	[lock lock];
 	
     thisEventName = [self digitalCodeDictionary:eventName];
@@ -225,10 +230,10 @@
             usleep(sleepTimeInMicrosec);
 	}
     else {
-        [digitalOutDevice digitalOutputBits:[self getDigitalValue:thisEventName]];
+//        [digitalOutDevice digitalOutputBits:[self getDigitalValue:thisEventName]];
         if (sleepTimeInMicrosec>0)
             usleep(sleepTimeInMicrosec);
-        [digitalOutDevice digitalOutputBits:(data & 0x7fff)];
+//        [digitalOutDevice digitalOutputBits:(data & 0x7fff)];
         if (sleepTimeInMicrosec>0)
             usleep(sleepTimeInMicrosec);
     }

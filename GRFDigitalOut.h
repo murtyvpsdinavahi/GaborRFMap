@@ -7,11 +7,12 @@
 //
 
 #import "GRF.h"
-#import <LablibITC18/LablibITC18.h>
+//#import <LablibITC18/LablibITC18.h>
 
 @interface GRFDigitalOut : NSObject {
 
-	LLITC18DataDevice		*digitalOutDevice;
+//	LLITC18DataDevice		*digitalOutDevice;
+    LLDataDevice		*digitalOutDevice;
 	NSLock					*lock;
 
 }
