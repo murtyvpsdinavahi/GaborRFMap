@@ -39,6 +39,11 @@ NSString *stimulusMonitorID = @"GaborRFMap Stimulus";
     [plaid release];
     [imageStim release];
     [player release];
+    [mapStimImage release];
+    //[bmpRep0 release]; //[Vinay] - it seems that this (bmpRep0) can't be owned even if it is allocated and initialized explicitly using -
+    // bmpRep0 = [[NSBitmapImageRep alloc] initWithData:nil]; in -init
+    // Therefore, we cannot release it ourselves
+    // Probably it gets properly allocated and initialized only with a valid bitmap data as done in GRFImageStim.m for bmpRep
 
     [super dealloc];
 }
@@ -92,6 +97,7 @@ NSString *stimulusMonitorID = @"GaborRFMap Stimulus";
 	taskStimList = [[NSMutableArray alloc] init];
 	mapStimList0 = [[NSMutableArray alloc] init];
 	mapStimList1 = [[NSMutableArray alloc] init];
+    mapStimImage = [[NSMutableArray alloc] init];
 	
 // Create and initialize the visual stimuli
 
@@ -179,6 +185,8 @@ by mapStimTable.
 	float frameRateHz;
 	StimDesc stimDesc;
 	LLGabor *taskGabor = [self taskGabor];
+    BOOL convertToImage;
+    NSString *imageFile;
 	
     trial = *pTrial;
 	[taskStimList removeAllObjects];
@@ -273,6 +281,23 @@ by mapStimTable.
 
     [[(GaborRFMap*)task mapStimTable0] makeMapStimList:mapStimList0 index:0 lastFrame:lastStimOffFrame pTrial:pTrial];
 	[[(GaborRFMap*)task mapStimTable1] makeMapStimList:mapStimList1 index:1 lastFrame:lastStimOffFrame pTrial:pTrial];
+    
+// [Vinay] - Prepare the image stimuli
+    convertToImage = [[task defaults] boolForKey:GRFConvertToImageKey];
+    
+    if (convertToImage) {
+        for (stim=0; stim < pTrial->numStim; stim++) {
+            [[mapStimList0 objectAtIndex:stim] getValue:&stimDesc];
+            
+            imageFile = [[[self getResourcesFolder] stringByAppendingPathComponent:@"Images"] stringByAppendingPathComponent:[NSString stringWithFormat:@"Image%d%s",(int)(stimDesc.spatialFreqCPD),".jpg"]];
+            //imageFile = [[[self getResourcesFolder] stringByAppendingPathComponent:@"Images"] stringByAppendingPathComponent:[NSString stringWithFormat:@"Image%d%s",(int)(stimDesc.spatialFreqCPD),".tif"]];
+            NSLog(@"imageFile is : %@",imageFile);
+            
+            bmpRep0 = [imageStim getImageStimBitmap:imageFile];
+            [mapStimImage insertObject:bmpRep0 atIndex:stim];
+        }
+        
+    }
 
 }
 	
@@ -304,10 +329,19 @@ by mapStimTable.
     ImageParams imageDesc;
     
     imageDesc = [self generateImageDescWithGabor:pSD];
-    imageFile = [[[self getResourcesFolder] stringByAppendingPathComponent:@"Images"] stringByAppendingPathComponent:[NSString stringWithFormat:@"Image%d%s",(int)(pSD->temporalFreqHz),".jpg"]];
+    imageFile = [[[self getResourcesFolder] stringByAppendingPathComponent:@"Images"] stringByAppendingPathComponent:[NSString stringWithFormat:@"Image%d%s",(int)(pSD->spatialFreqCPD),".jpg"]];
+    //imageFile = [[[self getResourcesFolder] stringByAppendingPathComponent:@"Images"] stringByAppendingPathComponent:[NSString stringWithFormat:@"Image%d%s",(int)(pSD->spatialFreqCPD),".tif"]];
     NSLog(@"imageFile is : %@",imageFile);
     [imageStim setImageStimData:imageDesc];
     [imageStim setImageStim:imageFile];
+}
+
+- (void)loadImageFromBitmap:(StimDesc *)pSD bitmapFile:(NSBitmapImageRep *)bmp;
+{
+    ImageParams imageDesc;
+    imageDesc = [self generateImageDescWithGabor:pSD];
+    [imageStim setImageStimData:imageDesc];
+    [imageStim setImageStimFromBitmap:bmp];
 }
 
 - (void)loadPlaid:(LLPlaid *)pld withStimDesc0:(StimDesc *)pSD0 withStimDesc1:(StimDesc *)pSD1;
@@ -356,6 +390,7 @@ by mapStimTable.
 	// tally stim lists first?
 	[mapStimList0 removeAllObjects];
 	[mapStimList1 removeAllObjects];
+    [mapStimImage removeAllObjects];
 }
 
 - (LLGabor *)mappingGabor0;
@@ -392,6 +427,9 @@ by mapStimTable.
     // local variables related to auditory stimulus [MD 25/04/2015]
     BOOL playAudStim;
     int kMapGaborAV;
+    bool useFewDigitalCodes;
+    
+    useFewDigitalCodes = [[task defaults] boolForKey:GRFUseFewDigitalCodesKey];
     
 	
     threadPool = [[NSAutoreleasePool alloc] init];		// create a threadPool for this thread
@@ -436,7 +474,8 @@ by mapStimTable.
     convertToImage = [[task defaults] boolForKey:GRFConvertToImageKey];
     
     if (convertToImage) {
-        [self loadImage:&stimDescs[kMapGabor0]];
+        //[self loadImage:&stimDescs[kMapGabor0]];
+        [self loadImageFromBitmap:&stimDescs[kMapGabor0] bitmapFile:[mapStimImage objectAtIndex:0]];
         stimDescs[kMapGabor0].stimType=kImageStim;
     }
     
@@ -507,9 +546,12 @@ by mapStimTable.
                 // Increment gaborFrames here
                 gaborFrames[index]++;
 			}
+
 		}
-        
-		[fixSpot draw];
+
+		//fixSpotColor = [fixSpot fixTargetColor];
+        //[fixSpot setFixTargetColor:fixSpotColor];
+        [fixSpot draw];
 		[[NSOpenGLContext currentContext] flushBuffer];
 		glFinish();
 		if (trialFrame == 0) {
@@ -532,8 +574,8 @@ by mapStimTable.
 			if (trialFrame == stimOffFrames[index]) {
                 [[task dataDoc] putEvent:@"stimulusOff" withData:&index];
                 [[task dataDoc] putEvent:@"stimulusOffTime"];
-                if (!useSingleITC18) {
-                    [digitalOut outputEvent:kStimulusOffDigitOutCode withData:index];
+                if (useFewDigitalCodes && (index==0)) {
+                    [digitalOut outputEvent:kStimulusOffDigitOutCode sleepInMicrosec:kSleepInMicrosec];
                 }
 				if (++stimIndices[index] >= [[stimLists objectAtIndex:index] count]) {	// no more entries in list
 					listDone = YES;
@@ -547,60 +589,63 @@ by mapStimTable.
                 [[task dataDoc] putEvent:@"stimulusOnTime"];
                 [[task dataDoc] putEvent:@"stimulus" withData:pSD];
 
-                if (!useSingleITC18) {
-                    [digitalOut outputEvent:kStimulusOnDigitOutCode withData:index];
+                if (useFewDigitalCodes) {
+                    if (index==0)
+                        [digitalOut outputEvent:kStimulusOnDigitOutCode sleepInMicrosec:kSleepInMicrosec];
                 }
-				// put the digital events
-				if (index == kTaskGabor) {
-					[digitalOut outputEventName:@"taskGabor" withData:(long)(pSD->stimType)];
-				}
-				else {
-					if (pSD->stimType != kNullStim) {
-						if (index == kMapGabor0)
-							[digitalOut outputEventName:@"mapping0" withData:(long)(pSD->stimType)];
-						if (index == kMapGabor1)
-							[digitalOut outputEventName:@"mapping1" withData:(long)(pSD->stimType)];
-					}
-				}
+                else {
+                    // put the digital events
+                    if (index == kTaskGabor) {
+                        [digitalOut outputEventName:@"taskGabor" withData:(long)(pSD->stimType)];
+                    }
+                    else {
+                        if (pSD->stimType != kNullStim) {
+                            if (index == kMapGabor0)
+                                [digitalOut outputEventName:@"mapping0" withData:(long)(pSD->stimType)];
+                            if (index == kMapGabor1)
+                                [digitalOut outputEventName:@"mapping1" withData:(long)(pSD->stimType)];
+                        }
+                    }
                 
-                if (convertToPlaid && !convertToImage && index == kMapGabor0) {
-                    [digitalOut outputEventName:@"mappingPlaid" withData:(long)(pSD->stimType)];
-                }
+                    if (convertToPlaid && !convertToImage && index == kMapGabor0) {
+                        [digitalOut outputEventName:@"mappingPlaid" withData:(long)(pSD->stimType)];
+                    }
                 
-                if (convertToImage && index == kMapGabor0) {
-                    [digitalOut outputEventName:@"imageStimulus" withData:(long)(stimDescs[kMapGabor0].temporalFreqHz)];
+                    if (convertToImage && index == kMapGabor0) {
+                        [digitalOut outputEventName:@"imageStimulus" withData:(long)(stimDescs[kMapGabor0].temporalFreqHz)];
+                    }
+				
+                    // Other prperties of the Gabor
+                    if (index == kMapGabor0 && pSD->stimType != kNullStim && !([[task defaults] boolForKey:GRFHideLeftDigitalKey])) {
+                        //NSLog(@"Sending left digital codes...");
+                        [digitalOut outputEventName:@"contrast" withData:(long)(10*(pSD->contrastPC))];
+                        [digitalOut outputEventName:@"temporalFreq" withData:(long)(10*(pSD->temporalFreqHz))];
+                        [digitalOut outputEventName:@"azimuth" withData:(long)(100*(pSD->azimuthDeg))];
+                        [digitalOut outputEventName:@"elevation" withData:(long)(100*(pSD->elevationDeg))];
+                        [digitalOut outputEventName:@"orientation" withData:(long)((pSD->directionDeg))];
+                        [digitalOut outputEventName:@"spatialFreq" withData:(long)(100*(pSD->spatialFreqCPD))];
+                        [digitalOut outputEventName:@"radius" withData:(long)(100*(pSD->radiusDeg))];
+                        [digitalOut outputEventName:@"sigma" withData:(long)(100*(pSD->sigmaDeg))];
+                    }
+				
+                    if (index == kMapGabor1 && pSD->stimType != kNullStim && !([[task defaults] boolForKey:GRFHideRightDigitalKey])) {
+                        //NSLog(@"Sending right digital codes...");
+                        [digitalOut outputEventName:@"contrast" withData:(long)(10*(pSD->contrastPC))];
+                        [digitalOut outputEventName:@"temporalFreq" withData:(long)(10*(pSD->temporalFreqHz))];
+                        [digitalOut outputEventName:@"azimuth" withData:(long)(100*(pSD->azimuthDeg))];
+                        [digitalOut outputEventName:@"elevation" withData:(long)(100*(pSD->elevationDeg))];
+                        [digitalOut outputEventName:@"orientation" withData:(long)((pSD->directionDeg))];
+                        [digitalOut outputEventName:@"spatialFreq" withData:(long)(100*(pSD->spatialFreqCPD))];
+                        [digitalOut outputEventName:@"radius" withData:(long)(100*(pSD->radiusDeg))];
+                        [digitalOut outputEventName:@"sigma" withData:(long)(100*(pSD->sigmaDeg))];
+                    }
                 }
-				
-				// Other prperties of the Gabor
-				if (index == kMapGabor0 && pSD->stimType != kNullStim && !([[task defaults] boolForKey:GRFHideLeftDigitalKey])) {
-					//NSLog(@"Sending left digital codes...");
-					[digitalOut outputEventName:@"contrast" withData:(long)(10*(pSD->contrastPC))];
-                    [digitalOut outputEventName:@"temporalFreq" withData:(long)(10*(pSD->temporalFreqHz))];
-					[digitalOut outputEventName:@"azimuth" withData:(long)(100*(pSD->azimuthDeg))];
-					[digitalOut outputEventName:@"elevation" withData:(long)(100*(pSD->elevationDeg))];
-					[digitalOut outputEventName:@"orientation" withData:(long)((pSD->directionDeg))];
-					[digitalOut outputEventName:@"spatialFreq" withData:(long)(100*(pSD->spatialFreqCPD))];
-					[digitalOut outputEventName:@"radius" withData:(long)(100*(pSD->radiusDeg))];
-					[digitalOut outputEventName:@"sigma" withData:(long)(100*(pSD->sigmaDeg))];
-				}
-				
-				if (index == kMapGabor1 && pSD->stimType != kNullStim && !([[task defaults] boolForKey:GRFHideRightDigitalKey])) {
-					//NSLog(@"Sending right digital codes...");
-					[digitalOut outputEventName:@"contrast" withData:(long)(10*(pSD->contrastPC))];
-                    [digitalOut outputEventName:@"temporalFreq" withData:(long)(10*(pSD->temporalFreqHz))];
-					[digitalOut outputEventName:@"azimuth" withData:(long)(100*(pSD->azimuthDeg))];
-					[digitalOut outputEventName:@"elevation" withData:(long)(100*(pSD->elevationDeg))];
-					[digitalOut outputEventName:@"orientation" withData:(long)((pSD->directionDeg))];
-					[digitalOut outputEventName:@"spatialFreq" withData:(long)(100*(pSD->spatialFreqCPD))];
-					[digitalOut outputEventName:@"radius" withData:(long)(100*(pSD->radiusDeg))];
-					[digitalOut outputEventName:@"sigma" withData:(long)(100*(pSD->sigmaDeg))];
-				}
                 
                 if (pSD->stimType == kTargetStim) {
 					targetPresented = YES;
 					targetOnFrame = trialFrame;
-                    if (!useSingleITC18) {
-                        [digitalOut outputEvent:kTargetOnDigitOutCode withData:(kTargetOnDigitOutCode+1)];
+                    if (useFewDigitalCodes && (index==0)) {
+                        [digitalOut outputEvent:kTargetOnDigitOutCode sleepInMicrosec:kSleepInMicrosec];
                     }
 				}
 				stimOffFrames[index] = stimDescs[index].stimOffFrame;		// previous done by now, save time for this one
@@ -621,7 +666,8 @@ by mapStimTable.
                     }
                     
                     if (convertToImage && index == kMapGabor0) {
-                        [self loadImage:&stimDescs[kMapGabor0]];
+                        //[self loadImage:&stimDescs[kMapGabor0]];
+                        //[self loadImageFromBitmap:&stimDescs[kMapGabor0] bitmapFile:[mapStimImage objectAtIndex:(stimIndices[index]+1)]]; // [Vinay] - do not load it as yet. Load it on the frame before the next stimulus is drawn. This way the fixation spot retains its colour.
                         stimDescs[kMapGabor0].stimType=kImageStim;
                     }
                     
@@ -640,6 +686,11 @@ by mapStimTable.
                 [gabors makeObjectsPerformSelector:@selector(store)];
                 [plaid store];
 			}
+            
+            // [Vinay] - Load the next image on the frame previous to its stimOnFrame
+            if (((stimIndices[index]) < [[stimLists objectAtIndex:index] count]) && (index == kMapGabor0) && (trialFrame == stimDescs[kMapGabor0].stimOnFrame - 1) && convertToImage) {
+                            [self loadImageFromBitmap:&stimDescs[kMapGabor0] bitmapFile:[mapStimImage objectAtIndex:(stimIndices[index])]]; // [Vinay] - stimIndices[index] is already incremented on the stimOffFrame of the previous stimulus
+            }
 		}
     }
 	
@@ -670,6 +721,7 @@ by mapStimTable.
 	stimulusOn = abortStimuli = NO;
 	[stimLists release];
     [threadPool release];
+    [mapStimImage removeAllObjects]; // [Vinay] - The objects need to be removed here, otherwise they keep adding up across trials
 }
 
 - (void)setFixSpot:(BOOL)state;

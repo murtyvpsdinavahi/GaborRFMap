@@ -96,6 +96,10 @@ NSString *ImageSizeDegKey = @"sizeDeg";
 
 	if(![bmpRep bitmapData])
 		return;
+    
+    // [Vinay] - compute the aspect ratio and draw the stimulus as per the original aspect ratio
+    // float *aspectRatio;
+    aspectRatio = (float)imgWidth/(float)imgHeight;
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
@@ -106,6 +110,7 @@ NSString *ImageSizeDegKey = @"sizeDeg";
 
 // Draw it!
 	glBegin(GL_QUADS);
+        /*
 		glTexCoord2f(0.0, 0.0); 
 		glVertex2f(azimuthDeg + sizeDeg/2, elevationDeg + sizeDeg/2);
 		glTexCoord2f(imgWidth, 0.0); 
@@ -114,6 +119,17 @@ NSString *ImageSizeDegKey = @"sizeDeg";
 		glVertex2f(azimuthDeg - sizeDeg/2, elevationDeg - sizeDeg/2);
 		glTexCoord2f(0.0, imgHeight); 
 		glVertex2f(azimuthDeg + sizeDeg/2, elevationDeg - sizeDeg/2);
+        */
+    
+        glTexCoord2f(0.0, 0.0);
+        glVertex2f(azimuthDeg - (aspectRatio * sizeDeg)/2, elevationDeg + sizeDeg/2);
+        glTexCoord2f(imgWidth, 0.0);
+        glVertex2f(azimuthDeg + (aspectRatio * sizeDeg)/2, elevationDeg + sizeDeg/2);
+        glTexCoord2f(imgWidth, imgHeight);
+        glVertex2f(azimuthDeg + (aspectRatio * sizeDeg)/2, elevationDeg - sizeDeg/2);
+        glTexCoord2f(0.0, imgHeight);
+        glVertex2f(azimuthDeg - (aspectRatio * sizeDeg)/2, elevationDeg - sizeDeg/2);
+    
 	glEnd();
 	glDisable(GL_TEXTURE_RECTANGLE_EXT);
 }
@@ -296,6 +312,49 @@ NSString *ImageSizeDegKey = @"sizeDeg";
 	[self getTextureInfo];
 // Run through our initialization routine
 	[self initGL];	
+}
+
+
+- (NSBitmapImageRep *)getImageStimBitmap:(NSString*)filePath;
+{
+    
+    // First, deallocate any image reps we might have.
+    /*
+	if(bmpRep && !(bmpRep == nil || [bmpRep bitmapData] == nil))
+	{
+		[bmpRep release];
+	}*/
+	if(!filePath)
+		return 0;
+    // Get raw bitmap data from the NSImage
+	NSImage	*currentImage = [[NSImage alloc] initWithContentsOfFile:filePath];
+    [currentImage lockFocus];
+    bmpRep = [[NSBitmapImageRep alloc] initWithData:[currentImage TIFFRepresentation]];
+    [currentImage unlockFocus];
+    return bmpRep;
+}
+
+- (void)setImageStimFromBitmap:(NSBitmapImageRep *)bmp;
+{
+    
+    // First, deallocate any image reps we might have.
+	if(bmp)
+	{
+		glDeleteTextures(1, &imageTexture);
+	}
+	
+    bmpRep = bmp;
+    
+    imgWidth = [bmpRep size].width;
+	imgHeight = [bmpRep size].height;
+    
+    // Set our scaling factors
+	scaleX = imgWidth / scaleFactor;
+	scaleY = imgHeight / scaleFactor;
+	//NSLog(@"Image: %d x %d", imgWidth, imgHeight);
+	[self getTextureInfo];
+    // Run through our initialization routine
+	[self initGL];
 }
 
 - (void)makeBackgroundImage;

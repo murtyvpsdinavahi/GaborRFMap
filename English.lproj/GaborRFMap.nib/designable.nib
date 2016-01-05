@@ -1049,7 +1049,7 @@
                                                 <binding destination="1499" name="value" keyPath="arrangedObjects.validReps" id="1757"/>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn identifier="invalidReps" width="103.04638671875" minWidth="43.04638671875" maxWidth="1000" id="1755">
+                                        <tableColumn identifier="invalidReps" width="88.04638671875" minWidth="43.04638671875" maxWidth="1000" id="1755">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Invalid">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -3069,6 +3069,17 @@
                         </buttonCell>
                         <connections>
                             <binding destination="498" name="value" keyPath="values.GRFConvertToImage" id="6In-Li-TgH"/>
+                        </connections>
+                    </button>
+                    <button id="7eR-SY-7gZ">
+                        <rect key="frame" x="164" y="276" width="154" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="use few digital codes" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Q0p-u4-UUR">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <binding destination="498" name="value" keyPath="values.GRFUseFewDigitalCodes" id="qKO-Yi-dL7"/>
                         </connections>
                     </button>
                 </subviews>
